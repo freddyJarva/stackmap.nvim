@@ -18,11 +18,15 @@ M.push = function (name, mode, mappings)
         local existing_map = find_mapping(maps, lhs)
 
         if existing_map then
-            table.insert(existing_maps, existing_map)
+            existing_maps[lhs] = existing_map
         end
     end
 
-    M._stack[name] = existing_maps
+    M._stack[name] = M._stack[name] or {}
+    M._stack[name][mode] = {
+        existing = existing_maps,
+        mappings = mappings,
+    }
 
     for lhs, rhs in pairs(mappings) do
         -- TODO: pass options
@@ -30,7 +34,23 @@ M.push = function (name, mode, mappings)
     end
 end
 
-M.pop = function (name)
+M.pop = function (name, mode)
+    local state = M._stack[name][mode]
+    M._stack[name][mode] = nil
+    if state then
+        for lhs, rhs in pairs(state.mappings) do
+            if state.existing[lhs] then
+                local og_mapping = state.existing[lhs]
+                vim.keymap.set(mode, lhs, og_mapping.rhs, og_mapping.opts)
+            else
+                vim.keymap.del(mode, lhs)
+            end
+        end
+    end
+end
+
+M._clear = function ()
+    M._stack = {}
 end
 
 return M
