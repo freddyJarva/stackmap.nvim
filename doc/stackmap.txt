@@ -3,7 +3,7 @@
 
 This plugin help you to push maps on some event, and then pop them when you're done with said event
 
-                                                                 stackmap.push()
+                                                                 *stackmap.push()*
 stackmap.push({name}, {mode}, {mappings})
 
     Push the {name} mappings for a particular {mode}. Mappings should be a key value pair of { lhs = rhs, ... }. >
@@ -13,7 +13,7 @@ stackmap.push({name}, {mode}, {mappings})
             ...
         })
 <
-
+                                                                *stackmap.pop()*
 stackmap.pop({name}, {mode})
 
     Pop the {name} mappings. Restores original mappings from before calling
